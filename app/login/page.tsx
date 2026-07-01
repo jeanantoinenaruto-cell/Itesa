@@ -103,6 +103,17 @@ export default function Login() {
        className={inputStyle}
        onChange={(e) => setPassword(e.target.value)}
        />
+   
+
+   <div className="flex justify-end mb-3">
+  <button
+    onClick={() => router.push("/forgot-password")}
+    className="text-xs sm:text-sm text-white/70 hover:text-white underline transition"
+  >
+    Mot de passe oublié ?
+  </button>
+</div>
+       
 
        <button
        onClick={handleLogin} 
