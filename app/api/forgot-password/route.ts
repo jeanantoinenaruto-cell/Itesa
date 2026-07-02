@@ -18,7 +18,6 @@ export async function POST(req: Request) {
       await supabaseAdmin.auth.admin.listUsers();
 
     if (userError) {
-      console.log("USER ERROR:", userError);
       return NextResponse.json(
         { error: "User fetch error" },
         { status: 500 }
@@ -34,13 +33,11 @@ export async function POST(req: Request) {
       );
     }
 
+    // 2. token
     const token = crypto.randomUUID();
     const expires_at = Date.now() + 15 * 60 * 1000;
 
-    console.log("EMAIL:", email);
-    console.log("TOKEN:", token);
-
-    // 2. save token
+    // 3. save token
     const { error } = await supabaseAdmin
       .from("reset_tokens")
       .insert({
@@ -51,16 +48,21 @@ export async function POST(req: Request) {
       });
 
     if (error) {
-      console.log("SUPABASE ERROR:", error);
       return NextResponse.json(
         { error: "DB error" },
         { status: 500 }
       );
     }
 
-    const resetLink = `http://localhost:3000/reset-password?token=${token}`;
+    // 4. reset link
+    const baseUrl =
+      process.env.NODE_ENV === "production"
+        ? "https://itesa-app.vercel.app"
+        : "http://localhost:3000";
 
-    // 3. BREVO EMAIL (DEBUG COMPLET)
+    const resetLink = `${baseUrl}/reset-password/${token}`;
+
+    // 5. email
     const response = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
       headers: {
@@ -72,33 +74,20 @@ export async function POST(req: Request) {
           name: "ITESA",
           email: "tech@itesagroup.com",
         },
-        to: [
-          {
-            email: email,
-          },
-        ],
+        to: [{ email }],
         subject: "Reset password",
         htmlContent: `
           <div>
             <h2>Reset password</h2>
-            <p>Clique ici :</p>
             <a href="${resetLink}">Reset</a>
           </div>
         `,
       }),
     });
 
-    const brevoData = await response.json();
-
-    console.log("BREVO STATUS:", response.status);
-    console.log("BREVO RESPONSE:", brevoData);
-
     if (!response.ok) {
       return NextResponse.json(
-        {
-          error: "Brevo error",
-          details: brevoData,
-        },
+        { error: "Brevo error" },
         { status: 500 }
       );
     }
@@ -106,8 +95,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: true });
 
   } catch (err) {
-    console.log("SERVER ERROR:", err);
-
     return NextResponse.json(
       { error: "Server error" },
       { status: 500 }

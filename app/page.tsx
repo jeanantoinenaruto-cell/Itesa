@@ -83,7 +83,7 @@ export default function Home() {
             </>
           ) : (
             <>
-              <span className="font-bold">👤 {user}</span>
+              <span className="font-bold">👤 {user.name}</span>
               <button
                 onClick={logout}
                 className="bg-white text-red-600 px-3 py-1 rounded font-bold"
@@ -125,7 +125,7 @@ export default function Home() {
               </>
             ) : (
               <>
-                <span className="font-bold">👤 {user}</span>
+                <span className="font-bold">👤 {user.name}</span>
                 <button
                   onClick={() => {
                     logout();

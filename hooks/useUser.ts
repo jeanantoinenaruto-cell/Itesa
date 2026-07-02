@@ -1,13 +1,13 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from "react";
-import {supabase} from "../lib/supabase"
+import { useState, useEffect } from "react"
+import { supabase } from "../lib/supabase"
 
-export function useUser () {
-  const [user, setUser] = useState<string | null>(null)
+export function useUser() {
+  const [user, setUser] = useState<null | { name: string; email: string }>(null)
   const [loading, setLoading] = useState(true)
 
-  function updateUser (session: any) {
+  function updateUser(session: any) {
     const authUser = session?.user
 
     if (!authUser) {
@@ -16,29 +16,34 @@ export function useUser () {
       return
     }
 
-    const firstName = authUser.user_metadata?.first_name;
+    const firstName = authUser.user_metadata?.first_name
     const lastName = authUser.user_metadata?.last_name
 
-    setUser(
-      firstName && lastName ?
-      `${firstName} ${lastName}` : authUser.email
-    )
+    setUser({
+      name:
+        firstName && lastName
+          ? `${firstName} ${lastName}`
+          : "Utilisateur",
+      email: authUser.email,
+    })
+
     setLoading(false)
   }
 
   useEffect(() => {
-  supabase.auth.getSession().then(({ data: {session}}) => {
-    updateUser(session)
-  })
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      updateUser(session)
+    })
 
-  const {data: {subscription}} = supabase.auth.onAuthStateChange((_event, session)=> {
-    updateUser(session)
-  } )
+    const { data: { subscription } } =
+      supabase.auth.onAuthStateChange((_event, session) => {
+        updateUser(session)
+      })
 
-  return () => 
-    subscription.unsubscribe()
-  
-  },[])
+    return () => {
+      subscription.unsubscribe()
+    }
+  }, [])
 
-  return {user, loading}
+  return { user, loading }
 }
