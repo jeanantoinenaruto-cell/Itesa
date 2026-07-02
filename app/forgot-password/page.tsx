@@ -1,5 +1,5 @@
 "use client";
-
+import { Eye, EyeOff } from "lucide-react"
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -86,4 +86,4 @@ export default function ForgotPassword() {
       </div>
     </main>
   );
-}
+}  
