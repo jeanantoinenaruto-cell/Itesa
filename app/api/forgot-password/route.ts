@@ -57,7 +57,7 @@ export async function POST(req: Request) {
     // 4. reset link
     const baseUrl =
       process.env.NODE_ENV === "production"
-        ? "https://itesa-mdkxx0oob-itesa1.vercel.app"
+        ? "https://itesagroup.com"
         : "http://localhost:3000";
 
     const resetLink = `${baseUrl}/reset-password/${token}`;
