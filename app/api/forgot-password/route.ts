@@ -13,23 +13,45 @@ export async function POST(req: Request) {
       );
     }
 
+    // 1. trouver user
+    const { data, error: userError } =
+      await supabaseAdmin.auth.admin.listUsers();
+
+    if (userError) {
+      console.log("USER ERROR:", userError);
+      return NextResponse.json(
+        { error: "User fetch error" },
+        { status: 500 }
+      );
+    }
+
+    const user = data.users.find((u) => u.email === email);
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "User introuvable" },
+        { status: 404 }
+      );
+    }
+
     const token = crypto.randomUUID();
     const expires_at = Date.now() + 15 * 60 * 1000;
 
-    // 🔥 DEBUG ICI
     console.log("EMAIL:", email);
     console.log("TOKEN:", token);
-    console.log("BREVO KEY EXISTS:", !!process.env.BREVO_API_KEY);
 
-    const { error } = await supabaseAdmin.from("reset_tokens").insert({
-      email,
-      token,
-      expires_at,
-    });
+    // 2. save token
+    const { error } = await supabaseAdmin
+      .from("reset_tokens")
+      .insert({
+        email,
+        token,
+        user_id: user.id,
+        expires_at,
+      });
 
     if (error) {
       console.log("SUPABASE ERROR:", error);
-
       return NextResponse.json(
         { error: "DB error" },
         { status: 500 }
@@ -38,6 +60,7 @@ export async function POST(req: Request) {
 
     const resetLink = `http://localhost:3000/reset-password?token=${token}`;
 
+    // 3. BREVO EMAIL (DEBUG COMPLET)
     const response = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
       headers: {
@@ -49,28 +72,33 @@ export async function POST(req: Request) {
           name: "ITESA",
           email: "tech@itesagroup.com",
         },
-        to: [{ email }],
+        to: [
+          {
+            email: email,
+          },
+        ],
         subject: "Reset password",
         htmlContent: `
           <div>
-            <h2>Mot de passe oublié</h2>
-            <p>Clique sur le lien :</p>
-            <a href="${resetLink}">Reset password</a>
-            <p style="color:gray;font-size:12px;">
-              Expire dans 15 minutes
-            </p>
+            <h2>Reset password</h2>
+            <p>Clique ici :</p>
+            <a href="${resetLink}">Reset</a>
           </div>
         `,
       }),
     });
 
-    const data = await response.json();
+    const brevoData = await response.json();
+
+    console.log("BREVO STATUS:", response.status);
+    console.log("BREVO RESPONSE:", brevoData);
 
     if (!response.ok) {
-      console.log("BREVO ERROR:", data);
-
       return NextResponse.json(
-        { error: "Email error" },
+        {
+          error: "Brevo error",
+          details: brevoData,
+        },
         { status: 500 }
       );
     }

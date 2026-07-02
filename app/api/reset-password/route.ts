@@ -12,14 +12,22 @@ export async function POST(req: Request) {
       );
     }
 
-    // 1. vérifier token
+    // 1. récupérer token (SAFE)
     const { data, error } = await supabaseAdmin
       .from("reset_tokens")
       .select("*")
       .eq("token", token)
-      .single();
+      .maybeSingle();
 
-    if (error || !data) {
+    if (error) {
+      console.log("TOKEN QUERY ERROR:", error);
+      return NextResponse.json(
+        { error: "Token query error" },
+        { status: 500 }
+      );
+    }
+
+    if (!data) {
       return NextResponse.json(
         { error: "Token invalide" },
         { status: 400 }
@@ -34,28 +42,45 @@ export async function POST(req: Request) {
       );
     }
 
-    // 3. update password dans table users
-    const { error: updateError } = await supabaseAdmin
-      .from("users")
-      .update({ password })
-      .eq("email", data.email);
-
-    if (updateError) {
+    // 3. vérifier user_id
+    if (!data.user_id) {
+      console.log("MISSING USER_ID:", data);
       return NextResponse.json(
-        { error: "Update failed" },
+        { error: "User ID manquant dans le token" },
         { status: 500 }
       );
     }
 
-    // 4. supprimer token
-    await supabaseAdmin
+    // 4. update password Supabase Auth
+    const { error: updateError } =
+      await supabaseAdmin.auth.admin.updateUserById(
+        data.user_id,
+        { password }
+      );
+
+    if (updateError) {
+      console.log("UPDATE ERROR:", updateError);
+      return NextResponse.json(
+        { error: "Password update failed" },
+        { status: 500 }
+      );
+    }
+
+    // 5. delete token
+    const { error: deleteError } = await supabaseAdmin
       .from("reset_tokens")
       .delete()
       .eq("token", token);
 
+    if (deleteError) {
+      console.log("DELETE ERROR:", deleteError);
+    }
+
     return NextResponse.json({ success: true });
 
   } catch (err) {
+    console.log("SERVER ERROR:", err);
+
     return NextResponse.json(
       { error: "Server error" },
       { status: 500 }

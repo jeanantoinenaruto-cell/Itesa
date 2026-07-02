@@ -1,4 +1,6 @@
 "use client";
+import { Eye, EyeOff } from "lucide-react"
+
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -6,6 +8,7 @@ import { supabase } from "../../lib/supabase";
 
 export default function Signup() {
   const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false)
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -167,12 +170,23 @@ if (insertError) {
           />
 
           <input
-            type="password"
+            type={showPassword ? "text" : "password"}
             placeholder="Mot de passe"
             value={password}
             className={inputStyle}
             onChange={(e) => setPassword(e.target.value)}
           />
+
+
+  <button
+    type="button"
+    onClick={() => setShowPassword(!showPassword)}
+    className="mb-3 -translate-y-1/2 text-white/70 hover:text-white"
+  >
+    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+  </button>
+
+  
 
           <button
             onClick={handleSignup}
