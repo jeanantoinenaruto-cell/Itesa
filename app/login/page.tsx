@@ -7,6 +7,7 @@ import { supabase } from "../../lib/supabase"
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
 
@@ -26,11 +27,6 @@ export default function Login() {
       return;
     }
 
-    if(!cleanEmail.includes("@")) {
-      setMessage("veuillez entrez un email valide")
-      setMessageType("error")
-      return
-    }
 
    
  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -40,7 +36,7 @@ if (!emailRegex.test(cleanEmail)) {
   setMessageType("error");
   return;
 }
-
+setLoading(true);
 
     const { error} = await supabase.auth.signInWithPassword({
       email: cleanEmail,
@@ -48,10 +44,13 @@ if (!emailRegex.test(cleanEmail)) {
     });
 
     if(error) {
+       setLoading(false);
       setMessage("Email ou mot de passe incorrect.")
       setMessageType("error")
       return
     }
+
+    setLoading(false);
     
     setMessage("connexion reussie !" );
     setMessageType("succes");
@@ -136,22 +135,17 @@ if (!emailRegex.test(cleanEmail)) {
   </button>
 </div>
        
-
-       <button
-       onClick={handleLogin} 
-       className="w-full bg-red-600 p-3 rounded-lg text-white font-bold hover:bg-red-700 transition"
-       >
-        Se connecter
-
-       </button>
-
-       <button
-       onClick={() => router.push("/signup")}
-       className="w-full mt-3 border border-white/20 text-white p-3 rounded-lg hover:bg-white/10 transition"
-       >
-        creer un compte
-       </button>
-
+<button
+  onClick={handleLogin}
+  disabled={loading}
+  className={`w-full p-3 rounded-lg text-white font-bold transition ${
+    loading
+      ? "bg-gray-500 cursor-not-allowed"
+      : "bg-red-600 hover:bg-red-700"
+  }`}
+>
+  {loading ? "Connexion..." : "Se connecter"}
+</button>
          <button
        onClick={() => router.push("/")}
        className="w-full mt-3 border border-white/20 text-white p-3 rounded-lg hover:bg-white/10 transition"

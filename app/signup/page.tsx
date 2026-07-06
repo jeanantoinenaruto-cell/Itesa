@@ -13,6 +13,7 @@ export default function Signup() {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
@@ -44,11 +45,6 @@ export default function Signup() {
   return;
 }
 
-if (!cleanEmail.includes("@")) {
-  setMessage("Veuillez entrer une adresse e-mail valide.");
-  setMessageType("error");
-  return;
-}
 
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -66,6 +62,7 @@ if (!emailRegex.test(cleanEmail)) {
       return;
     }
 
+    setLoading(true);
     // 🔥 1. CRÉER COMPTE SUPABASE AUTH
     const { data, error } = await supabase.auth.signUp({
       email: cleanEmail,
@@ -79,6 +76,7 @@ if (!emailRegex.test(cleanEmail)) {
     });
     
    if (error) {
+      setLoading(false);
   if (error.message.includes("already")) {
     setMessage("Vous avez déjà un compte. Connectez-vous.");
   } else {
@@ -102,6 +100,7 @@ if (!emailRegex.test(cleanEmail)) {
 ]);
 
 if (insertError) {
+    setLoading(false);
   if (insertError.message.includes("duplicate")) {
     setMessage("Vous avez déjà un compte. Connectez-vous.");
   } else {
@@ -112,6 +111,9 @@ if (insertError) {
   setMessageType("error");
   return;
 }
+
+  setLoading(false);
+
     setMessage("Compte créé avec succès !");
     setMessageType("success");
 
@@ -210,20 +212,17 @@ if (insertError) {
   
 
   
-
-          <button
-            onClick={handleSignup}
-            className="w-full bg-red-600 p-3 rounded-lg text-white font-bold hover:bg-red-700 transition"
-          >
-            Créer compte
-          </button>
-
-          <button
-            onClick={() => router.push("/login")}
-            className="w-full mt-3 bg-red-600 p-3 rounded-lg text-white font-bold hover:bg-red-700 transition"
-          >
-            Se connecter
-          </button>
+             <button
+              onClick={handleSignup}
+              disabled={loading}
+               className={`w-full p-3 rounded-lg text-white font-bold transition ${
+               loading
+               ? "bg-gray-500 cursor-not-allowed"
+               : "bg-red-600 hover:bg-red-700"
+                                }`}
+                  >
+                {loading ? "Création du compte..." : "Créer compte"}
+                </button>
 
           <button
             onClick={() => router.push("/")}
