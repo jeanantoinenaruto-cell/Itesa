@@ -51,6 +51,10 @@ export default function Contact() {
           <a href="/">Accueil</a>
           <a href="/plans">Plans</a>
           <a href="/contact">Contact</a>
+          {user && (
+            <a href="/account">Mon Compte</a>
+          )}
+          
 
           {!user ? (
             <>
@@ -89,6 +93,9 @@ export default function Contact() {
             <a onClick={() => setOpen(false)} href="/">Accueil</a>
             <a onClick={() => setOpen(false)} href="/plans">Plans</a>
             <a onClick={() => setOpen(false)} href="/contact">Contact</a>
+            {user && (
+            <a onClick={() => setOpen(false)} href="/account">Mon Compte</a>
+          )}
 
             {!user ? (
               <>

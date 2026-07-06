@@ -168,7 +168,7 @@ if (insertError) {
             className={inputStyle}
             onChange={(e) => setPhone(e.target.value)}
           />
-
+ <div className="relative">
           <input
             type={showPassword ? "text" : "password"}
             placeholder="Mot de passe"
@@ -181,10 +181,12 @@ if (insertError) {
   <button
     type="button"
     onClick={() => setShowPassword(!showPassword)}
-    className="mb-3 -translate-y-1/2 text-white/70 hover:text-white"
+    className="mb-3 absolute py-4 px-3  right-0 -translate-y-1/2 text-white/70 hover:text-white"
   >
     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
   </button>
+
+  </div>
 
   
 

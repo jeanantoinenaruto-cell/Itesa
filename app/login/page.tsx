@@ -53,7 +53,7 @@ export default function Login() {
   }
 
   const inputStyle = 
-  " w-full p-3 rounded-lg bg-white/10 text-white mb-3 outline-none border border-white/10 placeholder-white/60"
+  " w-full p-3 rounded-lg bg-white/10 text-white mb-3 outline-none border border-white/10 placeholder-white/60 "
 
   return (
     <main className="relative min-h-screen overflow-hidden">
@@ -69,7 +69,7 @@ export default function Login() {
         </div>
 
       </div>
-      <div className="absolute inset-0 bg-black/50"></div>
+      <div className="absolute inset-0 bg-black/50 r"></div>
 
       <div className="relative z-10 flex items-center justify-center min-h-screen">
 
@@ -97,30 +97,31 @@ export default function Login() {
        className={inputStyle}
        onChange={(e) => setEmail(e.target.value)}
        />
+<div className="relative">
 
-
-        <input 
-      type={showPassword ? "text" : "password"}
-       placeholder="Mot de passe"
-       value={password}
-       className={inputStyle}
-       onChange={(e) => setPassword(e.target.value)}
-       />
+  <input
+    type={showPassword ? "text" : "password"}
+    placeholder="Mot de passe"
+    value={password}
+    className={`${inputStyle}`}
+    onChange={(e) => setPassword(e.target.value)}
+    
+    
+  />
 
   <button
     type="button"
     onClick={() => setShowPassword(!showPassword)}
-    className="mb-0 -translate-y-1/2 text-white/70 hover:text-white"
+    className=" absolute py-4 px-3  right-0 text-white/70 hover:text-white"
   >
     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
   </button>
-
-  
+</div>
 
    <div className="flex justify-end mb-3">
   <button
     onClick={() => router.push("/forgot-password")}
-    className="text-xs sm:text-sm text-white/70 hover:text-white underline transition"
+    className=" text-xs sm:text-sm text-white/70 hover:text-white underline transition"
   >
     Mot de passe oublié ?
   </button>
@@ -146,7 +147,7 @@ export default function Login() {
        onClick={() => router.push("/")}
        className="w-full mt-3 border border-white/20 text-white p-3 rounded-lg hover:bg-white/10 transition"
        >
-        retour a laccueil
+         ← retour a laccueil
        </button>
         </div>
       </div>

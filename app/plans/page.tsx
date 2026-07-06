@@ -67,6 +67,11 @@ export default function Plans() {
           <Link href="/plans">Plans</Link>
           <Link href="/contact">Contact</Link>
 
+          {user && (
+            <Link href="/account">Mon Compte</Link>
+          )}
+          
+
           {!user ? (
             <>
               <Link href="/signup">S'inscrire</Link>
@@ -104,6 +109,9 @@ export default function Plans() {
             <Link onClick={() => setOpen(false)} href="/">Accueil</Link>
             <Link onClick={() => setOpen(false)} href="/plans">Plans</Link>
               <Link onClick={() => setOpen(false)} href="/contact">Contact</Link>
+               {user && (
+            <Link onClick={() => setOpen(false)} href="/account">Mon Compte</Link>
+          )}
 
             {!user ? (
               <>

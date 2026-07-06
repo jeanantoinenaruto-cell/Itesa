@@ -52,7 +52,7 @@ export default function ResetPassword() {
           Reset password
         </h1>
 
-        
+        <div className="relative">
           <input
             type={showPassword ? "text" : "password"}
             placeholder="Nouveau mot de passe"
@@ -64,10 +64,11 @@ export default function ResetPassword() {
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="mb-3 -translate-y-1/2 text-white/70"
+            className="mb-3 absolute py-4 px-3  right-0 -translate-y-1/2 text-white/70"
           >
             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
+          </div>
         
 
         <button
