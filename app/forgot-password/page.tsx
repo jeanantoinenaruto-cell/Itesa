@@ -18,6 +18,10 @@ export default function ForgotPassword() {
     setLoading(true);
     setMessage("");
 
+    setTimeout(() => {
+      router.push("/")
+    }, 3000)
+
     try {
       const res = await fetch("/api/forgot-password", {
         method: "POST",
