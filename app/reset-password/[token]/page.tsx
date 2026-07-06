@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Eye, EyeOff } from "lucide-react";
 
 export default function ResetPassword() {
   const router = useRouter();
@@ -11,16 +10,21 @@ export default function ResetPassword() {
   const token = params.token as string;
 
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function handleReset() {
-    if (!password || !token) {
+    if (!password || !token || !confirmPassword) {
       setMessage("Données manquantes");
       return;
     }
-
+      if (password !== confirmPassword) {
+  setMessage("Les mots de passe ne correspondent pas.");
+  
+  return;
+}
+  
     setLoading(true);
 
     const res = await fetch("/api/reset-password", {
@@ -52,23 +56,24 @@ export default function ResetPassword() {
           Reset password
         </h1>
 
-        <div className="relative">
+      
           <input
-            type={showPassword ? "text" : "password"}
+            type="password"
             placeholder="Nouveau mot de passe"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="mb-3 w-full p-3 pr-10 rounded-lg bg-white/10 text-white outline-none"
           />
 
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="mb-3 absolute py-4 px-3  right-0 -translate-y-1/2 text-white/70"
-          >
-            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-          </button>
-          </div>
+           <input
+            type="password"
+            placeholder="Confirmer Mot de passe"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className="mb-3 w-full p-3 pr-10 rounded-lg bg-white/10 text-white outline-none"
+          />
+
+
         
 
         <button

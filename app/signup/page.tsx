@@ -6,7 +6,6 @@ import { supabase } from "../../lib/supabase";
 
 export default function Signup() {
   const router = useRouter();
-  const [showPassword, setShowPassword] = useState(false)
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -50,6 +49,7 @@ if (!cleanEmail.includes("@")) {
   setMessageType("error");
   return;
 }
+
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
