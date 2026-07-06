@@ -32,6 +32,15 @@ export default function Login() {
       return
     }
 
+   
+ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+if (!emailRegex.test(cleanEmail)) {
+  setMessage("Veuillez entrer une adresse e-mail valide.");
+  setMessageType("error");
+  return;
+}
+
 
     const { error} = await supabase.auth.signInWithPassword({
       email: cleanEmail,

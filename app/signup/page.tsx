@@ -1,6 +1,4 @@
 "use client";
-import { Eye, EyeOff } from "lucide-react"
-
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -15,6 +13,7 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
@@ -25,18 +24,40 @@ export default function Signup() {
     const cleanEmail = email.trim();
     const cleanPhone = phone.trim();
     const cleanPassword = password.trim();
+    const cleanConfirmPassword = confirmPassword.trim();
 
     if (
       !cleanFirstName ||
       !cleanLastName ||
       !cleanEmail ||
       !cleanPhone ||
-      !cleanPassword
+      !cleanPassword ||
+      !cleanConfirmPassword
     ) {
       setMessage("Tous les champs sont obligatoires.");
       setMessageType("error");
       return;
     }
+
+  if (cleanPassword !== cleanConfirmPassword) {
+  setMessage("Les mots de passe ne correspondent pas.");
+  setMessageType("error");
+  return;
+}
+
+if (!cleanEmail.includes("@")) {
+  setMessage("Veuillez entrer une adresse e-mail valide.");
+  setMessageType("error");
+  return;
+}
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+if (!emailRegex.test(cleanEmail)) {
+  setMessage("Veuillez entrer une adresse e-mail valide.");
+  setMessageType("error");
+  return;
+}
 
     const phoneRegex = /^[34]\d{7}$/;
     if (!phoneRegex.test(cleanPhone)) {
@@ -168,25 +189,25 @@ if (insertError) {
             className={inputStyle}
             onChange={(e) => setPhone(e.target.value)}
           />
- <div className="relative">
+ 
           <input
-            type={showPassword ? "text" : "password"}
+            type="password"
             placeholder="Mot de passe"
             value={password}
             className={inputStyle}
             onChange={(e) => setPassword(e.target.value)}
           />
 
+          <input
+          type="password"
+          placeholder="Confirmer le mot de passe"
+          value={confirmPassword}
+          className={inputStyle}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+           />
 
-  <button
-    type="button"
-    onClick={() => setShowPassword(!showPassword)}
-    className=" absolute py-4 px-3  right-0 -translate-y-1/2 text-white/70 hover:text-white"
-  >
-    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-  </button>
 
-  </div>
+  
 
   
 
