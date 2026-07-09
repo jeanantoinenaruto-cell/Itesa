@@ -18,9 +18,8 @@ export default function ForgotPassword() {
     setLoading(true);
     setMessage("");
 
-    setTimeout(() => {
-      router.push("/")
-    }, 3000)
+
+    
 
     try {
       const res = await fetch("/api/forgot-password", {
@@ -35,6 +34,11 @@ export default function ForgotPassword() {
 
       if (data.success) {
         setMessage("Email envoyé 📩 vérifie ta boîte");
+        setTimeout(() => {
+          router.replace("/")
+        }, 3000)
+
+        return
       } else {
         setMessage("Erreur lors de l'envoi ❌");
       }
@@ -42,6 +46,7 @@ export default function ForgotPassword() {
       setMessage("Erreur serveur ❌");
     }
 
+    
     setLoading(false);
   }
 
